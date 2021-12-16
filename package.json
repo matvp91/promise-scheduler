@@ -1,0 +1,13 @@
+{
+  "name": "@matvp91/promise-scheduler",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "esbuild --bundle example/index.js --outfile=example/bundle.js --servedir=example",
+    "build": "esbuild --bundle src/index.js --platform=node --outfile=dist/index.js --minify --minify-identifiers"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.5"
+  }
+}

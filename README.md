@@ -1,6 +1,6 @@
 # promise-scheduler
 
-Run async code in a synchronous order by scheduling promises, with the possibility to cancel pending or active tasks. Optimized for the browser environment.
+Run async code in a synchronous order by scheduling promises, with the possibility to cancel pending or active tasks. Optimized for the browser environment, less then 1KB in file size.
 
 I came across a situation where I needed more fine-grained control over a sequence of async operations, with the added requirement that a single operational task should be abortable. Meaning that the task could abort earlier on in its execution in order for the next task to run. Think of a `fetch` call with an `AbortController` that makes the `Promise` resolve earlier due to the fact that the signal is cancelled along the way, but then in a sequence of multiple fetch calls.
 
@@ -16,7 +16,7 @@ const scheduler = new Scheduler();
 function createTask() {
   // Dummy function to define performing work over time.
   const work = () => new Promise(resolve => setTimeout(resolve, 500));
-  
+
   return async (throwIfCanceled) => {
     await work();
     throwIfCanceled(); // Checks whether we can continue or discard the callstack below.
@@ -52,12 +52,12 @@ class Instance {
     this.unload();
     scheduler.scheduleCallback(/* an async, abortable task with plenty of work */);
   }
-  
+
   unload() {
     scheduler.flushWork();
     scheduler.scheduleCallback(/* an async task for cleanup */);
   }
-  
+
   async destroy() {
     this.unload();
     await scheduler.waitForIdle(); // Ensures no pending work is left.

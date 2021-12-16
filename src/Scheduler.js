@@ -26,7 +26,9 @@ class Task {
 
     const onException = (error) => {
       this.onFail_({
+        // The task is cancelled but an error is thrown anyways.
         canceled: this.canceled_,
+        // The task is cancelled and the callstack is discarded.
         aborted: error === abortSymbol,
         error,
       });
@@ -51,6 +53,8 @@ class Queue extends Emitter {
 
   enqueue(task) {
     this.queue_.push(task);
+
+    // Attempt to start working immediately.
     this.dequeue();
   }
 
@@ -59,6 +63,7 @@ class Queue extends Emitter {
       return;
     }
 
+    // Get the next task and remove it from the queue.
     const task = this.queue_.shift();
     if (!task) {
       this.emit_("finished");
@@ -86,28 +91,36 @@ export class Scheduler {
 
   scheduleCallback(run, { onError, onAborted } = {}) {
     const task = new Task(run, ({ canceled, aborted, error }) => {
+      // The task got aborted, the error is irrelevant but
+      // report to the callback.
+      if (aborted) {
+        onAborted?.();
+        return;
+      }
+
       // An error occured between the time it was given a
       // cancel and the actual cancelation.
       if (canceled) {
         return;
       }
 
-      // The task got aborted, the error is irrelevant.
-      if (aborted) {
-        onAborted?.();
-      }
       // An unexpected error occured.
-      else {
-        onError?.(error);
-      }
+      onError?.(error);
     });
     this.queue_.enqueue(task);
   }
 
+  /**
+   * Cancels the executing task and discard all pending tasks.
+   */
   flushWork() {
     this.queue_.flush();
   }
 
+  /**
+   * Will resolve when in idle, meaning no task is executing or pending.
+   * @returns Promise
+   */
   waitForIdle() {
     return new Promise((resolve) => {
       if (!this.queue_.isWorking()) {

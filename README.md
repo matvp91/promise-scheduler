@@ -6,6 +6,12 @@ I came across a situation where I needed more fine-grained control over a sequen
 
 A lot of the existing solutions do not take abortable operations into account, and they do too much for my liking (such as allowing concurrency). This is a lightweight yet limited implementation of a scheduler able to execute async code one after another.
 
+## Install
+
+```
+npm install @matpv91/promise-scheduler
+```
+
 ## API
 
 ```javascript

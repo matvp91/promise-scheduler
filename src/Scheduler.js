@@ -72,10 +72,18 @@ class Queue extends Emitter {
 
     this.workingTask_ = task;
 
-    task.run().then(() => {
+    const potentialPromise = task.run();
+
+    const completeWork = () => {
       this.workingTask_ = null;
       this.dequeue();
-    });
+    };
+
+    if (typeof potentialPromise?.then === "function") {
+      potentialPromise.then(completeWork);
+    } else {
+      completeWork(potentialPromise);
+    }
   }
 
   flush() {

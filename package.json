@@ -5,14 +5,14 @@
   "license": "MIT",
   "scripts": {
     "start": "esbuild --bundle example/index.js --outfile=example/bundle.js --servedir=example",
-    "build": "esbuild --bundle src/index.js --platform=node --outfile=dist/index.js --minify --minify-identifiers",
+    "build": "esbuild --bundle src/index.js --platform=node --outfile=dist/index.js --minify --minify-identifiers && babel dist/index.js --out-file dist/index.js",
     "test": "jest",
     "benchmark": "node ./benchmark.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.5",
-    "@babel/preset-env": "^7.16.5",
-    "babel-jest": "^27.4.5",
+    "@babel/cli": "^7.16.8",
+    "@babel/preset-env": "^7.16.11",
+    "babel-jest": "^27.4.6",
     "benny": "^3.7.1",
     "bundlesize": "^0.18.1",
     "esbuild": "^0.14.5",
@@ -31,5 +31,8 @@
   "bugs": {
     "url": "https://github.com/matvp91/promise-scheduler/issues"
   },
-  "homepage": "https://github.com/matvp91/promise-scheduler#readme"
+  "homepage": "https://github.com/matvp91/promise-scheduler#readme",
+  "dependencies": {
+    "@babel/plugin-transform-arrow-functions": "^7.16.7"
+  }
 }

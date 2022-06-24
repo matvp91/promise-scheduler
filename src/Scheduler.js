@@ -72,10 +72,19 @@ class Queue extends Emitter {
 
     this.workingTask_ = task;
 
-    task.run().then(() => {
+    const completeWork = () => {
       this.workingTask_ = null;
       this.dequeue();
-    });
+    };
+
+    // The return value of a task run should not be
+    // async by definition, it might aswell be sync, or undefined.
+    const value = task.run();
+    if (value instanceof Promise) {
+      value.then(completeWork);
+    } else {
+      completeWork();
+    }
   }
 
   flush() {
